@@ -4,8 +4,6 @@ import geopandas as gpd
 import streamlit as st
 from streamlit_folium import st_folium
 
-from IPython.display import display
-import matplotlib.pyplot as plt
 
 place = 'Nottingham,  United Kingdom'
 
