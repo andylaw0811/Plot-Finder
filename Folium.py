@@ -7,8 +7,12 @@ from streamlit_folium import st_folium
 
 place = 'Nottingham,  United Kingdom'
 
-graph = ox.graph_from_place(place, network_type="drive")
-nodes, streets = ox.graph_to_gdfs(graph)
+#graph = ox.graph_from_place(place, network_type="drive")
+#nodes, streets = ox.graph_to_gdfs(graph)
+
+#road_style = {'color': '#1A19AC', 'weight': '1'}
+# folium.GeoJson(streets, style_function=lambda x: road_style).add_to(m)
+
 brown_fields = ox.geometries_from_place(place, {'landuse': 'brownfield'})
 
 # Use WGS 84 (epsg:4326) as the geographic coordinate system
@@ -16,14 +20,10 @@ brown_fields_polygon = brown_fields.to_crs(epsg=4326)
 # brown_fields_polygon.plot(figsize=(6, 6))
 # plt.show()
 
-
-road_style = {'color': '#1A19AC', 'weight': '1'}
-
-
 m = folium.Map(location=ox.geocode(place))
-folium.GeoJson(streets, style_function=lambda x: road_style).add_to(m)
 
-"""Add brownfield site boundary"""
+
+#Add brownfield site boundary
 for _, r in brown_fields_polygon.iterrows():
     # Without simplifying the representation of each borough,
     # the map might not be displayed
@@ -33,7 +33,7 @@ for _, r in brown_fields_polygon.iterrows():
     #folium.Popup(r["BoroName"]).add_to(geo_j)
     geo_j.add_to(m)
 
-"""Add centroid markers"""
+#Add centroid markers
 # Project to NAD83 projected crs
 brown_fields_centroids = brown_fields_polygon.to_crs(epsg=2263)
 
