@@ -5,10 +5,6 @@ import streamlit as st
 from streamlit_folium import st_folium
 from folium.plugins import Draw
 
-
-
-from IPython.display import display
-import matplotlib.pyplot as plt
 st.title("Land Uses in Nottingham")
 
 input = st.text_input("Search", value="Nottingham, United Kingdom")
