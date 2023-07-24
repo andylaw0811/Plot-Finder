@@ -28,20 +28,23 @@ def add_site_boundary(uses, colour):
         folium.Popup(uses).add_to(geo_j)
         geo_j.add_to(m)
 
-#graph = ox.graph_from_place(place, network_type="drive")
-#nodes, streets = ox.graph_to_gdfs(graph)
-#road_style = {'color': '#1A19AC', 'weight': '1'}
-#folium.GeoJson(streets, style_function=lambda x: road_style).add_to(m)
 
 # Sidebar
 st.sidebar.subheader("Add landuses to map")
-landuses = ['residential', 'grass', 'industrial','cemetery', 'commercial', 'retail', 'construction', 'recreation_ground', 'religious', 'garages', 'greenfield', 'railway', 'education', 'greenery', 'school', 'institutional', 'healthcare']
+landuses = ['brownfield', 'residential', 'grass', 'industrial','cemetery', 'commercial', 'retail', 'construction', 'recreation_ground', 'religious', 'garages', 'greenfield', 'railway', 'education', 'greenery', 'school', 'institutional', 'healthcare']
+
+default = 'brownfield'
 
 i=0
 colours = ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen',
               'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
 for x in landuses:
-    checkbox = st.sidebar.checkbox(x, False)
+    if x == default:
+        checkbox = st.sidebar.checkbox(x, True)
+        add_site_boundary(x, '#964B00')
+        continue
+    else:
+        checkbox = st.sidebar.checkbox(x, False)
     if checkbox:
         add_site_boundary(x, colours[i])
         i+=1
@@ -52,16 +55,15 @@ brown_fields = ox.geometries_from_place(place, {'landuse': 'brownfield'})
 brown_fields_polygon = brown_fields.to_crs(epsg=4326)
 
 
-
 #Add brownfield site boundary
-for _, r in brown_fields_polygon.iterrows():
-    # Without simplifying the representation of each borough,
-    # the map might not be displayed
-    sim_geo = gpd.GeoSeries(r["geometry"]).simplify(tolerance=0.001)
-    geo_j = sim_geo.to_json()
-    geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "#964B00", 'color': '#964B00'})
-    #folium.Popup(r["BoroName"]).add_to(geo_j)
-    geo_j.add_to(m)
+# for _, r in brown_fields_polygon.iterrows():
+#     # Without simplifying the representation of each borough,
+#     # the map might not be displayed
+#     sim_geo = gpd.GeoSeries(r["geometry"]).simplify(tolerance=0.001)
+#     geo_j = sim_geo.to_json()
+#     geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": "#964B00", 'color': '#964B00'})
+#     #folium.Popup(r["BoroName"]).add_to(geo_j)
+#     geo_j.add_to(m)
 
 #Add centroid markers
 # Project to NAD83 projected crs
