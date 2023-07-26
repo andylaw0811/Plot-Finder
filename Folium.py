@@ -87,7 +87,6 @@ for x in landuses:
                 icon=folium.Icon(color="red")
             ).add_to(m)
 
-
         continue
     else:
         checkbox = st.sidebar.checkbox(x, False)
