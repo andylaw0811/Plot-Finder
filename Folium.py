@@ -49,6 +49,7 @@ for x in landuses:
         # Project to NAD83 projected crs
         # Use WGS 84 (epsg:4326) as the geographic coordinate system
         brown_fields = ox.geometries_from_place(place, {'landuse': 'brownfield'})
+
         brown_fields_polygon = brown_fields.to_crs(epsg=4326)
         brown_fields_centroids = brown_fields_polygon.to_crs(epsg=2263)
 
@@ -66,20 +67,34 @@ for x in landuses:
 
         polygon_areas = brown_fields_polygon.to_crs({'init': 'epsg:32633'})['geometry'].area
 
-        for area, (_, r) in zip(polygon_areas, brown_fields_centroids.iterrows()):
+        brown_fields_columns = [
+            "name",
+            "disused:amenity",
+            "landuse",
+            "proposed:landuse",
+            "addr:city",
+            "addr:housenumber",
+            "addr:postcode",
+            "addr:street"
+        ]
+
+        for area, (_, r), name in zip(polygon_areas, brown_fields_centroids.iterrows(), brown_fields['name'].values):
             lat = r["centroid"].y
             lon = r["centroid"].x
             folium.Marker(
                 location=[lat, lon],
-                popup="Area: {:.2f}m²".format(float(area)),
+                popup="<b>Name: </b>{} <br><b>Area: </b>{:.2f}m²".format(name, float(area)),
                 icon=folium.Icon(color="red")
             ).add_to(m)
+
+
         continue
     else:
         checkbox = st.sidebar.checkbox(x, False)
     if checkbox:
         add_site_boundary(x, colours[i])
         i+=1
+
 
 
 
