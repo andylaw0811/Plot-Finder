@@ -2,7 +2,7 @@ import folium
 import osmnx as ox
 import geopandas as gpd
 import streamlit as st
-from streamlit_authenticator import Authenticate
+import streamlit_authenticator as stauth
 from streamlit_folium import st_folium
 from folium.plugins import Draw
 
@@ -15,7 +15,7 @@ from yaml.loader import SafeLoader
 with open('config.yaml') as file:
     config = yaml.load(file, Loader=SafeLoader)
 
-authenticator = Authenticate(
+authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
     config['cookie']['key'],
