@@ -9,18 +9,27 @@ from folium.plugins import Draw
 
 # Create Login Authenticator
 
-import yaml
+# import yaml
+#
+# from yaml.loader import SafeLoader
 
-from yaml.loader import SafeLoader
-with open('config.yaml') as file:
-    config = yaml.load(file, Loader=SafeLoader)
+# with open('config.toml') as file:
+#     config = yaml.load(file, Loader=SafeLoader)
+#
+# authenticator = stauth.Authenticate(
+#     config['credentials'],
+#     config['cookie']['name'],
+#     config['cookie']['key'],
+#     config['cookie']['expiry_days'],
+#     config['preauthorized']
+# )
 
 authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized']
+    dict(st.secrets['credentials']),
+    st.secrets['cookie']['name'],
+    st.secrets['cookie']['key'],
+    st.secrets['cookie']['expiry_days'],
+    st.secrets['preauthorized']
 )
 
 st.title("Brownfield Sites Finder")
@@ -29,7 +38,7 @@ name, authentication_status, username = authenticator.login('Login', 'main')
 
 if authentication_status:
     authenticator.logout('Logout', 'main')
-    
+
     # Streamlit Website
     st.title("Brownfield Sites Finder")
 
