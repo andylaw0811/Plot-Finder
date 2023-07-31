@@ -17,7 +17,7 @@ authenticator = stauth.Authenticate(
     st.secrets['preauthorized']
 )
 
-st.title("Brownfield Sites Finder")
+st.title("Plot Finder")
 name, authentication_status, username = authenticator.login('Login', 'main')
 
 
