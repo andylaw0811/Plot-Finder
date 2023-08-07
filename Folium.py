@@ -6,7 +6,7 @@ import streamlit_authenticator as stauth
 from streamlit_folium import st_folium
 from folium.plugins import Draw
 
-
+st.set_page_config(layout="wide")
 # Create Login Authenticator
 
 authenticator = stauth.Authenticate(
@@ -16,7 +16,7 @@ authenticator = stauth.Authenticate(
     st.secrets['cookie']['expiry_days'],
     st.secrets['preauthorized']
 )
-st.set_page_config(layout="wide")
+
 st.title("Plot Finder")
 
 name, authentication_status, username = authenticator.login('Login', 'main')
