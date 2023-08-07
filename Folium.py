@@ -129,7 +129,7 @@ if authentication_status:
             add_site_boundary(x, colours[i])
             i += 1
 
-    st_data = st_folium(m, width=1200, height=700, returned_objects=[])
+    st_data = st_folium(m, width=1200, height=600, returned_objects=[])
 elif authentication_status == False:
     st.error('Username/password is incorrect')
 elif authentication_status == None:
