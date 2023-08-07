@@ -6,6 +6,8 @@ import streamlit_authenticator as stauth
 from streamlit_folium import st_folium
 from folium.plugins import Draw
 
+# Set page to wide
+st.set_page_config(layout="wide")
 
 # Create Login Authenticator
 
@@ -25,7 +27,6 @@ name, authentication_status, username = authenticator.login('Login', 'main')
 
 if authentication_status:
     authenticator.logout('Logout', 'main')
-    st.set_page_config(layout="wide")
     # Streamlit Website
     input = st.text_input("Search", value="Nottingham, United Kingdom")
 
