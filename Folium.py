@@ -19,6 +19,7 @@ authenticator = stauth.Authenticate(
 
 st.title("Plot Finder")
 name, authentication_status, username = authenticator.login('Login', 'main')
+st.set_page_config(layout="wide")
 
 
 if authentication_status:
@@ -29,7 +30,17 @@ if authentication_status:
 
     place = input
     m = folium.Map(location=ox.geocode(place), zoom_start=12)
-    Draw(export=True).add_to(m)
+    folium.plugins.Fullscreen().add_to(m)
+    # Add measurement tools
+    # Draw(export=True).add_to(m)
+    measure_control = folium.plugins.MeasureControl(position='topleft',
+                                                    active_color='red',
+                                                    completed_color='red',
+                                                    primary_length_unit='kilometers',
+                                                    font_color='black'
+                                                    )
+
+    m.add_child(measure_control)
 
     colours = ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen',
                'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
@@ -116,7 +127,7 @@ if authentication_status:
             add_site_boundary(x, colours[i])
             i += 1
 
-    st_data = st_folium(m, width=1200, height=500, returned_objects=[])
+    st_data = st_folium(m, width=1200, height=700, returned_objects=[])
 elif authentication_status == False:
     st.error('Username/password is incorrect')
 elif authentication_status == None:
