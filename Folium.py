@@ -18,8 +18,9 @@ authenticator = stauth.Authenticate(
 )
 
 st.title("Plot Finder")
-name, authentication_status, username = authenticator.login('Login', 'main')
 st.set_page_config(layout="wide")
+name, authentication_status, username = authenticator.login('Login', 'main')
+
 
 
 if authentication_status:
