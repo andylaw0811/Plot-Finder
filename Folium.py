@@ -48,9 +48,9 @@ if authentication_status:
                'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
 
 
-    def add_site_boundary(uses, colour):
+    def add_site_boundary(key, value, colour):
         try:
-            site = ox.geometries_from_place(place, {'landuse': uses})
+            site = ox.geometries_from_place(place, {key: value})
             polygon = site.to_crs(epsg=4326)
             for _, r in polygon.iterrows():
                 # Without simplifying the representation of each borough,
@@ -58,7 +58,7 @@ if authentication_status:
                 sim_geo = gpd.GeoSeries(r["geometry"]).simplify(tolerance=0.001)
                 geo_j = sim_geo.to_json()
                 geo_j = folium.GeoJson(data=geo_j, style_function=lambda x: {"fillColor": colour, 'color': colour})
-                folium.Popup(uses).add_to(geo_j)
+                folium.Popup(value).add_to(geo_j)
                 geo_j.add_to(m)
         except Exception as e:
             print(e)
@@ -66,68 +66,84 @@ if authentication_status:
 
     # Sidebar
     st.sidebar.subheader("Add landuses to map")
-    landuses = ['brownfield', 'residential', 'grass', 'industrial', 'cemetery', 'commercial', 'retail', 'construction',
-                'recreation_ground', 'religious', 'garages', 'greenfield', 'railway', 'education', 'greenery', 'school',
-                'institutional', 'healthcare']
+    landuses = {'landuse': ['brownfield', 'residential', 'grass', 'industrial', 'cemetery', 'commercial', 'retail',
+                            'construction',
+                            'recreation_ground', 'religious', 'garages', 'greenfield', 'railway', 'education',
+                            'greenery', 'school',
+                            'institutional', 'healthcare']}
+
+    amenities = {
+        'amenity': ['marketplace', 'parking', 'bus_station', 'restaurant', 'bicycle_parking', 'cafe', 'fast_food',
+                    'fuel', 'bank', 'pharmacy', 'kindergarten', 'bar', 'hospital', 'clinic', 'pub', 'community_centre',
+                    'townhall',
+                    'police', 'social_facility', 'fire_station', 'library', 'charging_station', 'college']}
+
+    places = {'place': ['square', 'allotments']}
+
+    leisures = {'leisure': ['park', 'playground', 'sports_centre', 'fitness_centre', 'stadium', 'golf_course']}
+
+    all_uses = landuses | amenities | leisures | places  # Merge all the dictionaries
 
     default = 'brownfield'
 
     i = 0
     colours = ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen',
                'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
-    for x in landuses:
-        if x == default:
-            checkbox = st.sidebar.checkbox(x, True)
-            add_site_boundary(x, '#964B00')
-            # Add centroid markers
-            # Project to NAD83 projected crs
-            # Use WGS 84 (epsg:4326) as the geographic coordinate system
-            brown_fields = ox.geometries_from_place(place, {'landuse': 'brownfield'})
 
-            brown_fields_polygon = brown_fields.to_crs(epsg=4326)
-            brown_fields_centroids = brown_fields_polygon.to_crs(epsg=2263)
+    for key, value in all_uses.items():
+        for x in value:
+            if x == default:
+                checkbox = st.sidebar.checkbox(x, True)
+                add_site_boundary(key, x, '#964B00')
+                # Add centroid markers
+                # Project to NAD83 projected crs
+                # Use WGS 84 (epsg:4326) as the geographic coordinate system
+                brown_fields = ox.geometries_from_place(place, {'landuse': 'brownfield'})
 
-            # Access the centroid attribute of each polygon
-            brown_fields_centroids["centroid"] = brown_fields_centroids.centroid
+                brown_fields_polygon = brown_fields.to_crs(epsg=4326)
+                brown_fields_centroids = brown_fields_polygon.to_crs(epsg=2263)
 
-            # Project to WGS84 geographic crs
-            # geometry (active) column
-            brown_fields_centroids = brown_fields_centroids.to_crs(epsg=4326)
+                # Access the centroid attribute of each polygon
+                brown_fields_centroids["centroid"] = brown_fields_centroids.centroid
 
-            # Centroid column
-            brown_fields_centroids["centroid"] = brown_fields_centroids["centroid"].to_crs(epsg=4326)
+                # Project to WGS84 geographic crs
+                # geometry (active) column
+                brown_fields_centroids = brown_fields_centroids.to_crs(epsg=4326)
 
-            brown_fields_centroids.head()
+                # Centroid column
+                brown_fields_centroids["centroid"] = brown_fields_centroids["centroid"].to_crs(epsg=4326)
 
-            polygon_areas = brown_fields_polygon.to_crs({'init': 'epsg:32633'})['geometry'].area
+                brown_fields_centroids.head()
 
-            brown_fields_columns = [
-                "name",
-                "disused:amenity",
-                "landuse",
-                "proposed:landuse",
-                "addr:city",
-                "addr:housenumber",
-                "addr:postcode",
-                "addr:street"
-            ]
+                polygon_areas = brown_fields_polygon.to_crs({'init': 'epsg:32633'})['geometry'].area
 
-            for area, (_, r), name in zip(polygon_areas, brown_fields_centroids.iterrows(),
-                                          brown_fields['name'].values):
-                lat = r["centroid"].y
-                lon = r["centroid"].x
-                folium.Marker(
-                    location=[lat, lon],
-                    popup="<b>Name: </b>{} <br><b>Area: </b>{:.2f}m²".format(name, float(area)),
-                    icon=folium.Icon(color="red")
-                ).add_to(m)
+                brown_fields_columns = [
+                    "name",
+                    "disused:amenity",
+                    "landuse",
+                    "proposed:landuse",
+                    "addr:city",
+                    "addr:housenumber",
+                    "addr:postcode",
+                    "addr:street"
+                ]
 
-            continue
-        else:
-            checkbox = st.sidebar.checkbox(x, False)
-        if checkbox:
-            add_site_boundary(x, colours[i])
-            i += 1
+                for area, (_, r), name in zip(polygon_areas, brown_fields_centroids.iterrows(),
+                                              brown_fields['name'].values):
+                    lat = r["centroid"].y
+                    lon = r["centroid"].x
+                    folium.Marker(
+                        location=[lat, lon],
+                        popup="<b>Name: </b>{} <br><b>Area: </b>{:.2f}m²".format(name, float(area)),
+                        icon=folium.Icon(color="red")
+                    ).add_to(m)
+
+                continue
+            else:
+                checkbox = st.sidebar.checkbox(x, False)
+            if checkbox:
+                add_site_boundary(key, x, colours[i])
+                i += 1
 
     st_data = st_folium(m, width=1200, height=600, returned_objects=[])
 elif authentication_status == False:
