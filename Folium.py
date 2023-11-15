@@ -47,6 +47,17 @@ if authentication_status:
     colours = ['red', 'blue', 'green', 'purple', 'orange', 'darkred', 'lightred', 'beige', 'darkblue', 'darkgreen',
                'cadetblue', 'darkpurple', 'white', 'pink', 'lightblue', 'lightgreen', 'gray', 'black', 'lightgray']
 
+    # Find Office buildings
+
+    office_checkbox = st.sidebar.checkbox("Locate Offices", True)
+
+    offices = ox.geometries_from_place(
+        place,
+        {
+            "building": "office"
+        }
+    )
+
 
     def add_site_boundary(key, value, colour):
         try:
