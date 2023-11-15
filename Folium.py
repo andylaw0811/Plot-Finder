@@ -49,7 +49,7 @@ if authentication_status:
 
     # Find Office buildings
 
-    office_checkbox = st.sidebar.checkbox("Locate Offices", True)
+    office_checkbox = st.checkbox("Locate Offices", True)
 
     offices = ox.geometries_from_place(
         place,
