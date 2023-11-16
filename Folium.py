@@ -80,17 +80,18 @@ if authentication_status:
             building_bool = pd.DataFrame(row).notnull()
             for (k, v), bool in zip(row.items(), building_bool):
                 if k != "geometry" and building_bool[bool][0]:
-                    popup_text += "<b>{}: </b>{}".format(k, v) + "<br>"
+                    popup_text = popup_text.join("<b>{}: </b>{}".format(k, v) + "<br>")
 
-            iframe = folium.IFrame(popup_text,
-                                   width=100,
-                                   height=100)
+            # iframe = folium.IFrame(popup_text,
+            #                        width=100,
+            #                        height=100)
+            #
+            # popup = folium.Popup(iframe,
+            #                      max_width=100)
 
-            popup = folium.Popup(iframe,
-                                 max_width=100)
             folium.Marker(
                 location=[lat, lon],
-                popup=popup,
+                popup=popup_text,
                 icon=folium.Icon(color="blue")
             ).add_to(m)
 
