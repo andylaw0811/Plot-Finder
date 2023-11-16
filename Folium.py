@@ -5,6 +5,8 @@ import streamlit as st
 import streamlit_authenticator as stauth
 from streamlit_folium import st_folium
 from folium.plugins import Draw
+import pandas as pd
+import shapely
 
 # Set page to wide
 st.set_page_config(layout="wide")
@@ -49,14 +51,43 @@ if authentication_status:
 
     # Find Office buildings
 
-    office_checkbox = st.checkbox("Locate Offices", True)
+    office_checkbox = st.checkbox("Locate Offices", False)
 
-    offices = ox.geometries_from_place(
-        place,
-        {
-            "building": "office"
-        }
-    )
+    def office_popup_text(building_type, place_name):
+        buildings = ox.geometries_from_place(
+            place_name,
+            {
+                "building": building_type
+            }
+        )
+
+        building_data = buildings[buildings.columns]
+        building_value_bool = pd.DataFrame(building_data).notnull()
+
+        # Iterate over each row
+        for i, row in building_data.iterrows():
+            # iterate over the geometry and find if it's a point of polygon and find its centroid x-coord and y-coord
+            for geo in row["geometry"]:
+                if type(v) == shapely.geometry.point.Point:
+                    lat = geo.y
+                    lon = geo.x
+                else:
+                    row["centroid"] = geo.centroid
+                    lat = row["centroid"].y
+                    lon = row["centroid"].x
+                popup_text = ""
+                building_bool = pd.DataFrame(row).notnull()
+                for (k, v), bool in zip(row.items(), building_bool):
+                    if k != "geometry" and building_bool[bool][0]:
+                        popup_text += "<b>{}: </b>{} <br>".format(k, v)
+                folium.Marker(
+                    location=[lat, lon],
+                    popup=popup_text,
+                    icon=folium.Icon(color="blue")
+                ).add_to(m)
+
+    if office_checkbox:
+        office_popup_text("office", place)
 
 
     def add_site_boundary(key, value, colour):
