@@ -70,23 +70,17 @@ if authentication_status:
             if type(row["geometry"]) == shapely.geometry.point.Point:
                 lat = row["geometry"].y
                 lon = row["geometry"].x
-                popup_text = ""
-                building_bool = pd.DataFrame(row).notnull()
-                for (k, v), bool in zip(row.items(), building_bool):
-                    if k != "geometry" and building_bool[bool][0]:
-                        popup_text = popup_text + "<b>{}: </b>{} <br>".format(k, v)
             else:
                 row["centroid"] = row["geometry"].centroid
                 lat = row["centroid"].y
                 lon = row["centroid"].x
-                popup_text = ""
-                building_bool = pd.DataFrame(row).notnull()
-                for (k, v), bool in zip(row.items(), building_bool):
-                    if k != "geometry" and building_bool[bool][0]:
-                        popup_text = popup_text + "<b>{}: </b>{} <br>".format(k, v)
 
             # find the info that are available and add to marker
-
+            popup_text = ""
+            building_bool = pd.DataFrame(row).notnull()
+            for (k, v), bool in zip(row.items(), building_bool):
+                #if k != "geometry" and building_bool[bool][0]:
+                popup_text = popup_text + "<b>{}: </b>{} <br>".format(k, v)
             folium.Marker(
                 location=[lat, lon],
                 popup=popup_text,
