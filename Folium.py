@@ -81,9 +81,15 @@ if authentication_status:
             for (k, v), bool in zip(row.items(), building_bool):
                 if k != "geometry" and building_bool[bool][0]:
                     popup_text += "<b>{}: </b>{}".format(k, v) + "<br>"
+            iframe = folium.IFrame(popup_text,
+                                   width=100,
+                                   height=100)
+
+            popup = folium.Popup(iframe,
+                                 max_width=100)
             folium.Marker(
                 location=[lat, lon],
-                popup=folium.Popup(str(popup_text),parse_html=False),
+                popup=folium.Popup(popup_text),parse_html=False),
                 icon=folium.Icon(color="blue")
             ).add_to(m)
 
