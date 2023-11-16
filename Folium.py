@@ -90,7 +90,7 @@ if authentication_status:
                                  max_width=100)
             folium.Marker(
                 location=[lat, lon],
-                popup=folium.Popup(popup_text,parse_html=False),
+                popup=popup,
                 icon=folium.Icon(color="blue")
             ).add_to(m)
 
