@@ -68,10 +68,10 @@ if authentication_status:
         for i, row in building_data.iterrows():
             # find if it's a point of polygon and find its centroid x-coord and y-coord
             if type(row["geometry"]) == shapely.geometry.point.Point:
-                lat = geo.y
-                lon = geo.x
+                lat = row["geometry"].y
+                lon = row["geometry"].x
             else:
-                row["centroid"] = geo.centroid
+                row["centroid"] = row["geometry"].centroid
                 lat = row["centroid"].y
                 lon = row["centroid"].x
 
