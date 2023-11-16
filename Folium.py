@@ -80,7 +80,7 @@ if authentication_status:
             building_bool = pd.DataFrame(row).notnull()
             for (k, v), bool in zip(row.items(), building_bool):
                 if k != "geometry" and building_bool[bool][0]:
-                    popup_text += "<b>{}: </b>{} <br>".format(k, v)
+                    popup_text = popup_text + "<b>{}: </b>{} <br>".format(k, v)
             folium.Marker(
                 location=[lat, lon],
                 popup=popup_text,
