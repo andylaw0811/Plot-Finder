@@ -4,7 +4,7 @@ import geopandas as gpd
 import streamlit as st
 import streamlit_authenticator as stauth
 from streamlit_folium import st_folium
-from folium.plugins import Draw
+from folium.plugins import Draw, MarkerCluster
 import pandas as pd
 import shapely
 
@@ -63,7 +63,7 @@ if authentication_status:
 
         building_data = buildings[buildings.columns]
         building_value_bool = pd.DataFrame(building_data).notnull()
-
+        markercluster = MarkerCluster(control=False).add_to(m)
         # Iterate over each row
         for i, row in building_data.iterrows():
             # find if it's a point of polygon and find its centroid x-coord and y-coord
@@ -80,7 +80,7 @@ if authentication_status:
             building_bool = pd.DataFrame(row).notnull()
             for (k, v), bool in zip(row.items(), building_bool):
                 if k != "geometry" and building_bool[bool][0]:
-                    popup_text = popup_text + "<b>{}: </b>{}".format(k, v) + "<br>"
+                    popup_text += "<b>{}: </b>{}".format(k, v) + "<br>"
             folium.Marker(
                 location=[lat, lon],
                 popup=folium.Popup(str(popup_text),parse_html=False),
