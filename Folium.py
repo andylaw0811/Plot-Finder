@@ -66,25 +66,26 @@ if authentication_status:
 
         # Iterate over each row
         for i, row in building_data.iterrows():
-            # iterate over the geometry and find if it's a point of polygon and find its centroid x-coord and y-coord
-            for geo in row["geometry"]:
-                if type(v) == shapely.geometry.point.Point:
-                    lat = geo.y
-                    lon = geo.x
-                else:
-                    row["centroid"] = geo.centroid
-                    lat = row["centroid"].y
-                    lon = row["centroid"].x
-                popup_text = ""
-                building_bool = pd.DataFrame(row).notnull()
-                for (k, v), bool in zip(row.items(), building_bool):
-                    if k != "geometry" and building_bool[bool][0]:
-                        popup_text += "<b>{}: </b>{} <br>".format(k, v)
-                folium.Marker(
-                    location=[lat, lon],
-                    popup=popup_text,
-                    icon=folium.Icon(color="blue")
-                ).add_to(m)
+            # find if it's a point of polygon and find its centroid x-coord and y-coord
+            if type(row["geometry"]) == shapely.geometry.point.Point:
+                lat = geo.y
+                lon = geo.x
+            else:
+                row["centroid"] = geo.centroid
+                lat = row["centroid"].y
+                lon = row["centroid"].x
+
+            # find the info that are available and add to marker
+            popup_text = ""
+            building_bool = pd.DataFrame(row).notnull()
+            for (k, v), bool in zip(row.items(), building_bool):
+                if k != "geometry" and building_bool[bool][0]:
+                    popup_text += "<b>{}: </b>{} <br>".format(k, v)
+            folium.Marker(
+                location=[lat, lon],
+                popup=popup_text,
+                icon=folium.Icon(color="blue")
+            ).add_to(m)
 
     if office_checkbox:
         office_popup_text("office", place)
