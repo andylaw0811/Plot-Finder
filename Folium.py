@@ -83,7 +83,7 @@ if authentication_status:
                 popup_text = popup_text + "<b>{}: </b>{} <br>".format(k, v)
             folium.Marker(
                 location=[lat, lon],
-                popup=popup_text,
+                popup=folium.Popup(str(popup_text),parse_html=True),
                 icon=folium.Icon(color="blue")
             ).add_to(m)
 
