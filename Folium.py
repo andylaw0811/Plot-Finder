@@ -79,8 +79,8 @@ if authentication_status:
             popup_text = ""
             building_bool = pd.DataFrame(row).notnull()
             for (k, v), bool in zip(row.items(), building_bool):
-                if k != "geometry" and building_bool[bool][0]:
-                    popup_text = popup_text.join("<b>{}: </b>{}".format(k, v) + "<br>")
+                #if k != "geometry" and building_bool[bool][0]:
+                popup_text = popup_text.join("<b>{}: </b>{}".format(k, v) + "<br>")
 
             # iframe = folium.IFrame(popup_text,
             #                        width=100,
