@@ -197,6 +197,7 @@ if authentication_status:
                 i += 1
 
     st_data = st_folium(m, width=1200, height=600, returned_objects=[])
+    st.text_area("text to go here")
 elif authentication_status == False:
     st.error('Username/password is incorrect')
 elif authentication_status == None:
